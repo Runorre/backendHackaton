@@ -22,17 +22,11 @@ export const UserSchema = new Schema({
 		default: "USER",
 	},
 	email: {
-		address: {
-            type: String,
-            trim: true,
-			lowercase: true,
-			unique: true,
-			required: false,
-        },
-		isVerified: {
-            type: Boolean,
-			default: false
-        }
+		type: String,
+		trim: true,
+		lowercase: true,
+		unique: true,
+		required: true,
 	},
 	password: {
 		type: String,

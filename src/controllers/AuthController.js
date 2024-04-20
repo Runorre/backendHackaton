@@ -1,4 +1,6 @@
 import { TokenModel, UserModel } from "../models/index.js";
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 export default {
     login: async (req, res) => {
@@ -38,7 +40,13 @@ export default {
     },
     register: async (req, res) => {
         try {
-            let { email, password, name } = req.body;
+            let { email, password, firstname, lastname } = req.body;
+            if (!email || !password || !firstname || !lastname) {
+                return res.status(400).json({
+                    success: false,
+                    error: "Missing required fields",
+                });
+            }
             let user = await UserModel.findOne({ email: email }).lean();
             if (user) {
                 return res.status(409).json({
@@ -50,7 +58,7 @@ export default {
             const newUser = new UserModel({
                 email: email,
                 password: hashedPassword,
-                name: name,
+                name: {first: firstname, last: lastname},
             });
             await newUser.save();
             return res.status(201).json({

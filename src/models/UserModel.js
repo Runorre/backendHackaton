@@ -21,13 +21,13 @@ export const UserSchema = new Schema({
 		type: String,
 		default: "USER",
 	},
-	email: {
+	email: {address : {
 		type: String,
 		trim: true,
 		lowercase: true,
 		unique: true,
 		required: true,
-	},
+	}},
 	password: {
 		type: String,
 		minLength: [8],

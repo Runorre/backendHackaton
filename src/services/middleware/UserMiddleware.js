@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { UserModel } from '../../models/index.js';
 
 
 export const adminHandler = async(req, res, next) => {
@@ -59,8 +60,13 @@ export const bearerTokenHandler = async(req, res, next) => {
         });
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await UserModel
+                            .findById(decoded._id)
+                            .select({password: 0})
+                            .lean();
         
-        res.locals.decoded = decoded;
+        res.locals.decoded = user;
         return next();
     } catch(err) {
         if ((err).message == "jwt expired")
@@ -68,6 +74,7 @@ export const bearerTokenHandler = async(req, res, next) => {
                 success : false,
                 error : "Token expired",
             });
+        console.log(err)
         res.status(401).json({
             success : false,
             error : "Invalid token",

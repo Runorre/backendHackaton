@@ -6,7 +6,7 @@ export default {
     login: async (req, res) => {
         try {
             let { email, password } = req.body;
-            let user = await UserModel.findOne({ email: email }).lean();
+            let user = await UserModel.findOne({ "email.address": email }).lean();
             if (!user) {
                 return res.status(401).json({
                     success: false,
@@ -47,7 +47,7 @@ export default {
                     error: "Missing required fields",
                 });
             }
-            let user = await UserModel.findOne({ email: email }).lean();
+            let user = await UserModel.findOne({ "email.address": email.toLowerCase() }).lean();
             if (user) {
                 return res.status(409).json({
                     success: false,
@@ -56,7 +56,7 @@ export default {
             }
             const hashedPassword = await bcrypt.hash(password, 10);
             const newUser = new UserModel({
-                email: email,
+                email: {address : email},
                 password: hashedPassword,
                 name: {first: firstname, last: lastname},
             });
@@ -73,4 +73,36 @@ export default {
             });
         }
     },
+    changePassword : async (req, res) => {
+        try {
+            let { oldPassword, newPassword } = req.body;
+            let user = await UserModel.findById(req.user._id).lean();
+            if (!user) {
+                return res.status(401).json({
+                    success: false,
+                    error: "Invalid credentials",
+                });
+            }
+            let isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isPasswordMatch) {
+                return res.status(401).json({
+                    success: false,
+                    error: "Invalid credentials",
+                });
+            } else {
+                const hashedPassword = await bcrypt.hash(newPassword, 10);
+                await UserModel.findByIdAndUpdate(req.user._id, { password: hashedPassword });
+                return res.status(200).json({
+                    success: true,
+                    message: "Password updated",
+                });
+            }
+        } catch (err) {
+            console.error(err)
+            return res.status(500).json({
+                success: false,
+                error: "Internal server error",
+            });
+        }
+    }
 }

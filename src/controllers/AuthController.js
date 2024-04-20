@@ -1,4 +1,4 @@
-import { TokenModel } from "../models/index.js";
+import { TokenModel, UserModel } from "../models/index.js";
 
 export default {
     login: async (req, res) => {
@@ -28,7 +28,8 @@ export default {
                 });
             
             }
-        } catch {
+        } catch (err) {
+            console.error(err)
             return res.status(500).json({
                 success: false,
                 error: "Internal server error",
@@ -56,7 +57,8 @@ export default {
                 success: true,
                 message: "User created",
             });
-        } catch {
+        } catch (err) {
+            console.error(err)
             return res.status(500).json({
                 success: false,
                 error: "Internal server error",

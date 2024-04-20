@@ -6,14 +6,14 @@ export const UserSchema = new Schema({
 			type: String,
 			trim: true,
 			minLength: [3],
-			maxLength: [15],
+			maxLength: [50],
 			required: [true],
 		},
 		last: {
 			type: String,
 			trim: true,
 			minLength: [3],
-			maxLength: [15],
+			maxLength: [50],
 			required: [true],
 		}
 	},
@@ -44,4 +44,6 @@ export const UserSchema = new Schema({
 	timestamps: true,
 });
 
-export default UserSchema;
+const User = model('User', UserSchema);
+
+export default User;

@@ -16,4 +16,7 @@ export const TokenSchema = new Schema({
     timestamps: true
 });
 
-export default TokenSchema;
+
+const token = model('Token', TokenSchema);
+
+export default token;
